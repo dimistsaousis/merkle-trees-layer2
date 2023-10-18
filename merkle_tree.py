@@ -135,3 +135,39 @@ class MerkleTree:
             "index": index,  # the index of our leaf
             "value": leaf_value,  # the value of our leaf
         }
+
+    @staticmethod
+    def compute_merkle_root_from_proof(siblings, index, value):
+        """
+        Computes the merkle root using the provided proof.
+
+        This function attempts to recreate the merkle root by following the merkle path of the leaf upwards to the root.
+        At each level, it uses the sibling values provided in the proof to compute the parent nodes.
+
+        Parameters:
+        - siblings (list): The siblings of our leaf's merkle path.
+        - index (int): The index of our leaf.
+        - value (str): The value of our leaf.
+
+        Returns:
+        str: The computed merkle root.
+        """
+        merkle_path_node_value = value
+        merkle_path_node_index = index
+
+        for sibling in siblings:
+            if merkle_path_node_index % 2 == 0:
+                # if the current index of the node on our merkle path is even
+                merkle_path_node_value = MerkleTree.hash(
+                    merkle_path_node_value, sibling
+                )
+            else:
+                # if the current index of the node on our merkle path is odd
+                merkle_path_node_value = MerkleTree.hash(
+                    sibling, merkle_path_node_value
+                )
+
+            # Compute the index for the parent node
+            merkle_path_node_index //= 2
+
+        return merkle_path_node_value
