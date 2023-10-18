@@ -19,7 +19,3 @@ class TestAppendOnlyMerkleTree(unittest.TestCase):
             self.assertTrue(
                 self.tree.verify_delta_merkle_proof(self.tree.append_leaf(i))
             )
-
-
-if __name__ == "__main__":
-    unittest.main()

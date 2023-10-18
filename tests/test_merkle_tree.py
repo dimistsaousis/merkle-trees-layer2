@@ -84,7 +84,3 @@ class TestMerkleTree(unittest.TestCase):
         level, index, new_value = 3, 5, 100
         delta_proof = self.tree.get_delta_merkle_proof(level, index, new_value)
         self.assertTrue(self.tree.verify_delta_merkle_proof(delta_proof))
-
-
-if __name__ == "__main__":
-    unittest.main()

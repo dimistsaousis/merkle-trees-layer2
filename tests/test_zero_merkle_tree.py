@@ -39,7 +39,3 @@ class TestZeroMerkleTree(unittest.TestCase):
         for level in range(3):
             for index in range(2**level):
                 self.assertEqual(tree.node(level, index), self.tree.node(level, index))
-
-
-if __name__ == "__main__":
-    unittest.main()
