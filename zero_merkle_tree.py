@@ -92,3 +92,6 @@ class ZeroMerkleTree(MerkleTree):
 
         # Set the root node (level = 0, index = 0) to current value.
         self.node_store.set(0, 0, current_value)
+
+    def node(self, level, index):
+        return self.node_store.get(level, index)
