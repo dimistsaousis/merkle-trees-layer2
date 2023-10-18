@@ -176,3 +176,57 @@ class MerkleTree:
         return proof["root"] == self.compute_merkle_root_from_proof(
             proof["siblings"], proof["index"], proof["value"]
         )
+
+    def get_delta_merkle_proof(self, level, index, new_value):
+        """
+        Retrieve the delta merkle proof for a given leaf change.
+
+        Parameters:
+        - level (int): The level in the tree where the leaf is located.
+        - index (int): The index of the leaf within its level.
+        - new_value: The new value for the leaf.
+
+        Returns:
+        dict: A dictionary containing the index, siblings, old root, old value, new root, and new value.
+        """
+        old_leaf_proof = self.get_merkle_proof(level, index)
+        new_root = self.compute_merkle_root_from_proof(
+            old_leaf_proof["siblings"], index, new_value
+        )
+
+        return {
+            "index": index,
+            "siblings": old_leaf_proof["siblings"],
+            "oldRoot": old_leaf_proof["root"],
+            "oldValue": old_leaf_proof["value"],
+            "newRoot": new_root,
+            "newValue": new_value,
+        }
+
+    def verify_delta_merkle_proof(self, delta_merkle_proof):
+        """
+        Verify the delta merkle proof.
+
+        Parameters:
+        - delta_merkle_proof (dict): The delta merkle proof dictionary.
+
+        Returns:
+        bool: True if both the old and new merkle proofs are valid, False otherwise.
+        """
+        old_proof = {
+            "siblings": delta_merkle_proof["siblings"],
+            "index": delta_merkle_proof["index"],
+            "root": delta_merkle_proof["oldRoot"],
+            "value": delta_merkle_proof["oldValue"],
+        }
+
+        new_proof = {
+            "siblings": delta_merkle_proof["siblings"],
+            "index": delta_merkle_proof["index"],
+            "root": delta_merkle_proof["newRoot"],
+            "value": delta_merkle_proof["newValue"],
+        }
+
+        return self.verify_merkle_proof(old_proof) and self.verify_merkle_proof(
+            new_proof
+        )

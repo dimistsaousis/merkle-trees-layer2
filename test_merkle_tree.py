@@ -69,6 +69,22 @@ class TestMerkleTree(unittest.TestCase):
         # The computed root should match the tree's root
         self.assertEqual(computed_root, self.tree.root())
 
+    def test_get_delta_merkle_proof(self):
+        level, index, new_value = 3, 5, 100
+
+        proof = self.tree.get_merkle_proof(level, index)
+        delta_proof = self.tree.get_delta_merkle_proof(level, index, new_value)
+
+        # Assert the expected properties of the delta proof.
+        self.assertEqual(delta_proof["index"], index)
+        self.assertEqual(delta_proof["newValue"], new_value)
+        self.assertEqual(delta_proof["siblings"], proof["siblings"])
+
+    def test_verify_delta_merkle_proof(self):
+        level, index, new_value = 3, 5, 100
+        delta_proof = self.tree.get_delta_merkle_proof(level, index, new_value)
+        self.assertTrue(self.tree.verify_delta_merkle_proof(delta_proof))
+
 
 if __name__ == "__main__":
     unittest.main()
