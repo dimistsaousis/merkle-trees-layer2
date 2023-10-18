@@ -44,6 +44,31 @@ class TestMerkleTree(unittest.TestCase):
         )
         self.assertEqual(computed_root, self.tree.root())
 
+    def test_merkle_proof_verification(self):
+        level, index = 3, 5
+
+        # Generate a proof for a particular leaf node
+        proof = self.tree.get_merkle_proof(level, index)
+
+        # Check the validity of the proof
+        self.assertTrue(self.tree.verify_merkle_proof(proof))
+
+        # Modify the proof's root to an invalid value and test
+        proof["root"] = "invalidrootvalue"
+        self.assertFalse(self.tree.verify_merkle_proof(proof))
+
+    def test_merkle_proof_calculation(self):
+        level, index = 3, 5
+        proof = self.tree.get_merkle_proof(level, index)
+
+        # Use the proof details to compute the Merkle root
+        computed_root = self.tree.compute_merkle_root_from_proof(
+            proof["siblings"], proof["index"], proof["value"]
+        )
+
+        # The computed root should match the tree's root
+        self.assertEqual(computed_root, self.tree.root())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -171,3 +171,8 @@ class MerkleTree:
             merkle_path_node_index //= 2
 
         return merkle_path_node_value
+
+    def verify_merkle_proof(self, proof):
+        return proof["root"] == self.compute_merkle_root_from_proof(
+            proof["siblings"], proof["index"], proof["value"]
+        )
