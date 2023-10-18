@@ -36,6 +36,17 @@ def get_merkle_path_of_node(level, index):
     return merkle_path
 
 
+def get_sibling_node(level, index):
+    if level == 0:
+        raise ValueError("The root does not have a sibling")
+    elif index % 2 == 0:
+        # if node is even, its sibling is at index+1
+        return {"level": level, "index": index + 1}
+    else:
+        # if node is odd, its sibling is at index-1
+        return {"level": level, "index": index - 1}
+
+
 class MerkleTree:
     def __init__(self, height, leaves):
         self.height = height
