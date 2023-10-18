@@ -1,7 +1,17 @@
 # test_merkle_tree.py
 
 import unittest
-from merkle_tree import MerkleTree
+from merkle_tree import MerkleTree, get_merkle_path_of_node
+
+
+class TestMerklePath(unittest.TestCase):
+    def test_merkle_path(self):
+        expected_path = [
+            {"level": 3, "index": 5},
+            {"level": 2, "index": 2},
+            {"level": 1, "index": 1},
+        ]
+        self.assertEqual(get_merkle_path_of_node(3, 5), expected_path)
 
 
 class TestMerkleTree(unittest.TestCase):

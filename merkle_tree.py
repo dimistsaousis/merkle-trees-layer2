@@ -8,6 +8,34 @@ def hash_nodes(left_node, right_node):
     return hasher.hexdigest()
 
 
+def get_merkle_path_of_node(level, index):
+    """
+    Computes the Merkle path of a node in a Merkle tree.
+
+    When a leaf in a Merkle tree is updated, the change bubbles up the tree
+    affecting all ancestor nodes. These nodes form the Merkle path for the leaf.
+    The Merkle path of a node represents the nodes affected by a change to the node.
+
+    Given a node N(level, index), its parent is N(level-1, floor(index/2)).
+    For every node N(level, index), it has two children: N(level+1, index*2) and N(level+1, index*2+1).
+    Thus, to compute the Merkle path of a node, we recursively list out its ancestors.
+
+    Parameters:
+    - level (int): The level of the node in the Merkle tree.
+    - index (int): The index of the node at the given level.
+
+    Returns:
+    list: A list of dictionaries containing the level and index of each node in the Merkle path excluding the root.
+    """
+    merkle_path = []
+    current_level = level
+    while current_level > 0:
+        merkle_path.append({"level": current_level, "index": index})
+        index //= 2
+        current_level -= 1
+    return merkle_path
+
+
 class MerkleTree:
     def __init__(self, height, leaves):
         self.height = height
