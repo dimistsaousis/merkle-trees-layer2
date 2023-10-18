@@ -26,9 +26,10 @@ class TestZeroMerkleTree(unittest.TestCase):
         self.tree = ZeroMerkleTree(3)
 
     def test_set_leaf(self):
-        self.tree.set_leaf(0, 10)
+        delta_merkle_proof = self.tree.set_leaf(0, 10)
         tree = MerkleTree(3, [10, 0, 0, 0, 0, 0, 0, 0])
         self.assertEqual(tree.root(), self.tree.root())
+        self.assertTrue(self.tree.verify_delta_merkle_proof(delta_merkle_proof))
 
     def test_root(self):
         self.assertEqual(MerkleTree(3, [0 for _ in range(8)]).root(), self.tree.root())

@@ -68,7 +68,14 @@ class ZeroMerkleTree(MerkleTree):
         Args:
         - index (int): The index of the leaf to set.
         - value (str): The value to set for the leaf.
+
+        Returns:
+        - Delta merkle proof
         """
+        old_root = self.root()
+        old_value = self.node(self.height, index)
+        siblings = []
+
         # Start traversing the leaf's Merkle path at the leaf node.
         current_index = index
         current_value = value
@@ -82,16 +89,29 @@ class ZeroMerkleTree(MerkleTree):
                 # If the current index is even, then it has a sibling on the right (same level, index = current_index+1).
                 right_sibling = self.node_store.get(level, current_index + 1)
                 current_value = self.hash(current_value, right_sibling)
+                siblings.append(right_sibling)
             else:
                 # If the current index is odd, then it has a sibling on the left (same level, index = current_index-1).
                 left_sibling = self.node_store.get(level, current_index - 1)
                 current_value = self.hash(left_sibling, current_value)
+                siblings.append(left_sibling)
 
             # Set current index to the index of the parent node.
             current_index = current_index // 2
 
         # Set the root node (level = 0, index = 0) to current value.
         self.node_store.set(0, 0, current_value)
+        return {
+            "index": index,
+            "siblings": siblings,
+            "oldRoot": old_root,
+            "oldValue": old_value,
+            "newValue": value,
+            "newRoot": current_value,
+        }
 
     def node(self, level, index):
         return self.node_store.get(level, index)
+
+    def get_leaf(self, index):
+        return self.get_merkle_proof(self.height, index)
