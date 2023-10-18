@@ -1,10 +1,10 @@
 import hashlib
 
 
-class ZeroMerkleTree:
-    def __init__(self, height, leaves):
+class NodeStore:
+    def __init__(self, height):
+        self.nodes = {}
         self.height = height
-        self.leaves = leaves
         self.zero_hashes = self._compute_zero_hashes()
 
     @staticmethod
@@ -25,15 +25,26 @@ class ZeroMerkleTree:
             zero_hashes.append(current_zero_hash)
         return zero_hashes
 
-    def get_node_value(self, level: int) -> str:
+    def set(self, level: int, index: int, value: str):
         """
-        Get the node value for a given tree height and level on an empty tree
+        Set the value of the node in the data store.
 
         Args:
-        - tree_height (int): Height of the tree.
         - level (int): Level of the node.
+        - index (int): Index of the node.
+        - value (str): Value to set.
+        """
+        self.nodes[(level, index)] = value
+
+    def get(self, level: int, index: int) -> str:
+        """
+        Get the value of the node from the data store or return the correct zero hash if it doesn't exist.
+
+        Args:
+        - level (int): Level of the node.
+        - index (int): Index of the node.
 
         Returns:
         - str: Node value.
         """
-        return self.zero_hashes[self.height - level]
+        return self.nodes.get((level, index), self.zero_hashes[self.height - level])
