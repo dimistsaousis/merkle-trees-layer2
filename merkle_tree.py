@@ -172,6 +172,40 @@ class MerkleTree:
 
         return merkle_path_node_value
 
+    def compute_merkle_path_from_proof(self, siblings, index, value):
+        # Start our merkle node path at the leaf node
+        merkle_path_node_value = value
+        merkle_path_node_index = index
+        merkle_path = [value]
+
+        # We follow the leaf's merkle path up to the root,
+        # computing the merkle path's nodes using the siblings provided as we go along
+        for sibling in siblings:
+            merkle_path_node_sibling = sibling
+
+            if merkle_path_node_index % 2 == 0:
+                # If the current index of the node on our merkle path is even:
+                # - merkle_path_node_value is the left-hand node,
+                # - merkle_path_node_sibling is the right-hand node,
+                # - parent node's value is hash(merkle_path_node_value, merkle_path_node_sibling)
+                merkle_path_node_value = self.hash(
+                    merkle_path_node_value, merkle_path_node_sibling
+                )
+            else:
+                # If the current index of the node on our merkle path is odd:
+                # - merkle_path_node_sibling is the left-hand node,
+                # - merkle_path_node_value is the right-hand node,
+                # - parent node's value is hash(merkle_path_node_sibling, merkle_path_node_value)
+                merkle_path_node_value = self.hash(
+                    merkle_path_node_sibling, merkle_path_node_value
+                )
+
+            # Using our definition, the parent node of our path node is N(level-1, floor(index/2))
+            merkle_path_node_index = merkle_path_node_index // 2
+            merkle_path.append(merkle_path_node_value)
+
+        return merkle_path
+
     def verify_merkle_proof(self, proof):
         return proof["root"] == self.compute_merkle_root_from_proof(
             proof["siblings"], proof["index"], proof["value"]
